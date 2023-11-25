@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>EOS INSPECTION</title>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .statistics-container {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+
+        /* 示例样式 */
+        h2 {
+            color: #007bff;
+            /* 蓝色 */
+        }
+
+        h3 {
+            color: #6c757d;
+            /* 灰色 */
+        }
+
+        .highlight-red {
+            background-color: #dc3545;
+            /* 红色 */
+            color: white;
+        }
+
+        .highlight-green {
+            background-color: #28a745;
+            /* 绿色 */
+            color: white;
+        }
+
+        #chartContainer {
+            width: 40%;
+            height: 300px;
+        }
+
+        /* #tableContainer {
+            width: 100%;
+            overflow-x: auto;
+        } */
+
+        table {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* 示例样式 */
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+          }
+          
+          body {
+            width: 70%;
+            margin: 0 auto;
+          }
+          
+          /* 文字排版 */
+          
+          h1, h2, h3 {
+            font-family: 'Sonsie One', 'ZCOOL KuaiLe', cursive;
+            color: #2a2a2a;
+          }
+          
+          p, input, li {
+            font-family: 'Open Sans Condensed', sans-serif;
+            color: #2a2a2a;
+          }
+          
+          h1 {
+            font-size: 4rem;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 10px   black;
+          }
+          
+          h2 {
+            font-size: 3rem;
+            text-align: center;
+          }
+          
+          h3 {
+            font-size: 2.2rem;
+          }
+          
+          p, li {
+            font-size: 1.6rem;
+            line-height: 1.5;
+          }
+          
+          /* 标题布局 */
+          
+          nav, article, aside, footer {
+            background-color: white;
+            padding: 1%;
+          }
+          
+          nav {
+            height: 50px;
+            background-color: #66ccff;
+            display: flex;
+            margin-bottom: 10px;
+          }
+          
+          nav ul {
+            padding: 0;
+            list-style-type: none;
+            flex: 2;
+            display: flex;
+          }
+          
+          nav li {
+            display: inline;
+            text-align: center;
+            flex: 1;
+          }
+          
+          nav a {
+            display: inline-block;
+            font-size: 2rem;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: black;
+            transition-duration: 200ms;
+          }
+          
+          nav form {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 2em;
+          }
+          
+          nav a:hover {
+            color: white;
+            text-shadow: 0 0 10px wheat;
+            transition-duration: 200ms;
+          }
+          
+          input {
+            font-size: 1.6rem;
+            height: 32px;
+          }
+          
+          input[type="search"] {
+            flex: 3;
+          }
+          
+          input[type="submit"] {
+            flex: 1;
+            margin-left: 1rem;
+            background: #333;
+            border: 0;
+            color: white;
+          }
+          
+          /* 主体布局 */
+          
+          main {
+            display: flex;
+          }
+          
+          article {
+            flex: 4;
+          }
+          
+          aside {
+            flex: 1;
+            margin-left: 10px;
+            background-color: #66ccff;
+          }
+          
+          aside li {
+            padding-bottom: 10px;
+          }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="#">主页</a></li>
+            <li><a href="#">作品</a></li>
+            <li><a href="#">项目</a></li>
+            <li><a href="#">联系我们</a></li>
+        </ul>
+        <form>
+            <input type="search" name="q", placeholder="要搜索的内容" />
+            <input type="submit" value="搜索" />
+        </form>
+    </nav>
+    <main>
+    <!-- 节点信息 -->
+    <div id="inventorytableContainer">
+        <table>
+            <thead>
+                <tr>
+                    <th>主机名</th>
+                    <th>业务网</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for node in inventorys_info.inventorys %}
+                <tr>
+                    <td>{{ node.hostname }}</td>
+                    <td>{{ node.business_addr }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h2>巡检结果</h2>
+    <div class="statistics-container">
+        <div>
+            <h2>统计：</h2>
+            <ul>
+                <li>Pass Count: {{ pass_count }}</li>
+                <li>Failed Count: {{ failed_count }}</li>
+                <li>Total Count: {{ total_count }}</li>
+            </ul>
+        </div>
+        <div id="chartContainer">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+    <div id="tableContainer">
+        <h2>巡检明细表：</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>巡检项</th>
+                    <th>巡检结果</th>
+                    <th>详情</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pair in key_value_pairs %}
+                <tr class="{% if pair.value.success %}highlight-green{% else %}highlight-red{% endif %}">
+                    <td>{{ pair.key }}</td>
+                    <td>{{ pair.value.success }}</td>
+                    <td><a href="#detail{{ pair.key }}" onclick="highlightRow('{{ pair.key }}')">{{
+                            pair.value.msg.error_msg }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- 详情表 -->
+    <div id="detailTableContainer">
+        <h2>详情：</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>actual</th>
+                    <th>expected</th>
+                    <th>miss</th>
+                    <th>diff</th>
+                    <th>add</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pair in key_value_pairs %}
+                <tr id="detail{{ pair.key }}">
+                    <td>{{ pair.value.msg.actual }}</td>
+                    <td>{{ pair.value.msg.expected }}</td>
+                    <td>{{ pair.value.msg.miss }}</td>
+                    <td>{{ pair.value.msg.diff }}</td>
+                    <td>{{ pair.value.msg.add }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <aside>
+        <h2>集群信息</h2>
+        <ul>
+          <li>az: {{ inventorys_info.az }}</li>
+          <li>region: {{ inventorys_info.region }}</li>
+          <li>group: {{ inventorys_info.group }}</li>
+          <li>namespace: {{ inventorys_info.namespace }}</li>
+          <li>节点信息：</li>
+        </ul>
+      </aside>
+    </main>
+    <script>
+        // 统计数据
+        var passCount = {{ pass_count }};
+        var failedCount = {{ failed_count }};
+        var totalCount = {{ total_count }};
+
+        // 创建饼状图
+        var ctx = document.getElementById('chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Pass', 'Failed'],
+                datasets: [{
+                    data: [passCount, failedCount],
+                    backgroundColor: ['#4CAF50', '#F44336']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // 点击详情链接时触发高亮行和滚动到目标位置
+        function highlightRow(targetId) {
+            // 移除之前的高亮样式
+            var highlightedRow = document.querySelector(".highlight");
+            if (highlightedRow) {
+                highlightedRow.classList.remove("highlight");
+            }
+
+            // 添加高亮样式到目标行
+            var targetRow = document.getElementById("detail" + targetId);
+            if (targetRow) {
+                targetRow.classList.add("highlight");
+                targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 滚动到目标位置
+            }
+        }
+
+        // 获取 URL 中的锚点（哈希值）
+        var hash = window.location.hash;
+
+        // 检查锚点是否存在，并且以 "detail" 开头
+        if (hash && hash.startsWith("#detail")) {
+            // 获取目标行的 ID
+            var targetId = hash.substring(1);
+
+            // 添加高亮样式到目标行（初始加载时）
+            var targetRow = document.getElementById("detail" + targetId);
+            if (targetRow) {
+                targetRow.classList.add("highlight");
+                targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 滚动到目标位置
+            }
+        }
+        function formatJSON(data) {
+            return JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+
+</html>
